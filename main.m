@@ -1,8 +1,8 @@
-	clear;
-	addpath("import\");
-	addpath("plot\");
-	addpath("SH\");
-	addpath("import\mesh\")
+clear;
+addpath("import\");
+addpath("plot\");
+addpath("SH\");
+addpath("import\mesh\")
 % 	run import\MAIN_import.m
 %% 入射设置
 load tr_crack.mat
@@ -98,7 +98,11 @@ for iff = 1:nff
 end
 %% 绘制频率-反射系数图
 if ~(nff==1)
-	open plot\draw_coff_straight.mlx
+	if contains(fileName,'pipe')
+		open plot\draw_coff.mlx
+	else
+		open plot\draw_coff_straight.mlx
+	end
 end
-
+%% 波形动画
 % open animate_displacement.mlx

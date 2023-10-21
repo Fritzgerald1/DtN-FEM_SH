@@ -1,5 +1,9 @@
 clear
 %% .mphtxt的文件名
+% 更改路径
+if ~contains(pwd,'import')
+	cd import\
+end
 fileName = 'simple2' ; %%
 %% 子文件夹
 addpath("mesh\");
