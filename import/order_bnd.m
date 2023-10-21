@@ -1,4 +1,6 @@
 function bnd_order = order_bnd(refPoint,Coordinate, bnd)
+% 根据与参考点的距离，由近到远进行排序
+
 % 参考点
 refX = refPoint(1);
 refY = refPoint(2);

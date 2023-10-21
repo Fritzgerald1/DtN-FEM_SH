@@ -1,4 +1,4 @@
-function [ K,M ] = Stiffness_Mass_matrix_1( Nnode,Nelement,Ielement,Coordinate,material,he)
+function [ K,M ] = Stiffness_Mass_matrix( Nnode,Nelement,Ielement,Coordinate,material,he)
 % 输入
 %	he = 坐标归一化的系数
 mu = material.MU;

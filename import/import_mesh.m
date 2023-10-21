@@ -1,31 +1,54 @@
-function [Nnode,Nelement,Coordinate,Ielement,dL,dW,nLeft,nMid,nRight] = import_mesh(fileName,b)
+function [nNode,nElement,Coordinate,Ielement,n] = import_mesh_MPHTXT(fileName,bnd)
+% [nNode,nElement,Coordinate,Ielement,n] = import_mesh(fileName,bnd)
+%
+% 输入:
+%	fileName = .mphtxt的文件名前缀;
+%	bnd = 各边界的名字.
+% 输出:
+%	nNode = 节点总数;
+%	nElement = 单元总数;
+%	Coordinate = 节点坐标;
+%	Ielement = 单元信息;
+%	n = 各边界的节点编号[struct].
 
-[Nnode, Nelement, Coordinate, Ielement,dL,dW] = read_mesh_info_CQUAD8([fileName '.dat']);
-% Coordinate = Coordinate/b;
-%% 边界信息
+% n=struct; % n.边界=边界节点编号
+%% 网格信息
 fileNameMPHTXT = [fileName '.mphtxt'];
-nLeft = read_boudary_info(fileNameMPHTXT,"bnd_left");
-nRight = read_boudary_info(fileNameMPHTXT,"bnd_right");
-nMid = 1:Nnode;
-nMid([nLeft;nRight])=[]; % 中间边界节点的行号
+mesh_info = importMphtxt(fileNameMPHTXT);
 
-% 边界单元
-% %{
-% bnd_top_e = bound_element(Ielement, bnd_top);
-% bnd_bottom_e = bound_element(Ielement, bnd_bottom);
-% eLeft = bound_element(Ielement, nLeft);
-% eRight = bound_element(Ielement, nRight);
-%}
+[nNode, nElement, Coordinate, Ielement, nCentroid,n] =read_mesh_info(mesh_info,bnd);
 
-% 将边界节点排序
-refPoint = [0;-2*b];
-nLeft = order_bnd(refPoint,Coordinate, nLeft);
-nRight = order_bnd(refPoint,Coordinate, nRight);
- % 节点编号重排（左边界-中间-右边界）
-[Coordinate, Ielement, nLeft, nMid, nRight] = change_node_order(Coordinate,Ielement, nLeft,nMid,nRight);
-%% 缺陷定义
-% L_crack = 2*b;
-% W_crack = 0.2*b;
-% % nCrack = crack_boundary(Coordinate,L_crack,W_crack,b);
-% nCrack = tr_crack_boundary(Coordinate,L_crack,W_crack,b);
-% % eCrack =  bound_element(Ielement, nCrack);
+% 将左右边界节点排序
+minY = min(Coordinate(:,2));
+refPoint = [0;minY-1]; % 参考点
+n.left = order_bnd(refPoint,Coordinate, n.left);
+n.right = order_bnd(refPoint,Coordinate, n.right);
+
+% 节点编号重排（左边界-中间-右边界）
+[Coordinate, Ielement, n.left, n.mid, n.right] = change_node_order(Coordinate, Ielement, n.left, n.right, nCentroid);
+end
+%% 子函数
+function mesh = importMphtxt(filename, dataLines)
+%% 输入处理
+% 如果不指定 dataLines，请定义默认范围
+if nargin < 2
+	dataLines = [1, Inf];
+end
+%% 设置导入选项并导入数据
+opts = delimitedTextImportOptions("NumVariables", 3);
+% 指定范围和分隔符
+opts.DataLines = dataLines;
+opts.Delimiter = "#";
+% 指定列名称和类型
+opts.VariableNames = ["VarName1", "CreatedByCOMSOLMultiphysics", "VarName3"];
+opts.VariableTypes = ["string", "string", "string"];
+% 指定文件级属性
+opts.ExtraColumnsRule = "ignore";
+opts.EmptyLineRule = "read";
+% 指定变量属性
+opts = setvaropts(opts, ["VarName1", "CreatedByCOMSOLMultiphysics", "VarName3"], "WhitespaceRule", "preserve");
+opts = setvaropts(opts, ["VarName1", "CreatedByCOMSOLMultiphysics", "VarName3"], "EmptyFieldRule", "auto");
+% 导入数据
+mesh = readmatrix(filename, opts);
+mesh(ismissing(mesh)) ="";
+end

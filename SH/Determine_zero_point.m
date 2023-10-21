@@ -10,7 +10,7 @@ zpr = [];
 zero_flag = 0;
 Detmin=inf;
 sry = 0;
-iter = 40;% 迭代次数
+iter = 100;% 迭代次数
 step = 5;% 将子区间[yy-ty,yy+ty]划分为2*{step}份
 DetF=zeros(1,iter);
 ssry1=zeros(1,iter);
@@ -36,7 +36,7 @@ for k = 1:iter
 	ary = sry-dry;	bry = sry+dry;	dry = dry/step;
 end
 
-if DetF(1)/DetF(end) > 1e3 % 为零点
+if (DetF(1)/DetF(end) > 1e2) || (DetF(end)<1e-6)% 为零点
 	if flag
 		zero_flag = 1;
 		zpr = ssry1(end);
