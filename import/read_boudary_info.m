@@ -22,7 +22,7 @@ function [nBnd] = read_boudary_info(bnd,mesh_info)
 	str1 = " number of geometric entity indices";
 	[iEntityIndices,~] = find(edge_info==str1);
 
-	nGeometricEntityIndices = str2double(edge_info(iEntityIndices));
+	nGeometricEntityIndices = str2double(edge_info(iEntityIndices,1));
 	iEntityIndices = iEntityIndices+2;
 	indices=str2double(edge_info(iEntityIndices:iEntityIndices+nGeometricEntityIndices-1,1));
 	labeldNodeInRow = [];

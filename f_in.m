@@ -38,11 +38,9 @@ for ielement = 1:(length(nBnd)-1)/2
 		int_x = int_x+ iwGauss*Tin*N*qq;
 	end
 	if NormDirection == -1
-% 		F_in(iNode) = F_in(iNode)+int_x([1 8 4]);
 					F_in(2*ielement-1:2*ielement+1) = F_in(2*ielement-1:2*ielement+1)+ int_x([1 8 4]);
 	end
 	if NormDirection == 1
-% 		F_in(iNode) = F_in(iNode)+int_x([2 6 3]);
 					F_in(2*ielement-1:2*ielement+1) = F_in(2*ielement-1:2*ielement+1)+ int_x([2 6 3]);
 	end
 end

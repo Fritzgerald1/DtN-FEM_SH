@@ -9,11 +9,6 @@ w = wd*CT/h;
 % h = 1;
 q = sqrt((w/CT)^2-k^2);
 %% 频散方程
-% M(1,1) = cos(q*h);
-% M(1,2) = sin(q*h);
-% M(2,1) = cos(-q*h);
-% M(2,2) = sin(-q*h);
-% 
 M(1,1) = exp(1i*q*h);
 M(1,2) = -exp(-1i*q*h);
 M(2,1) = exp(-1i*q*h);
@@ -23,8 +18,6 @@ error = det(M);
 
 if nargout == 2
 	flag=1;
-% 	if abs(KL)<1e-1,	flag=0;	end
-% 	if abs(KT)<1e-1,	flag=0;	end
 	varargout{1} = flag;
 end
 
