@@ -9,6 +9,6 @@ bndX = Coordinate(bnd,1);
 bndY = Coordinate(bnd,2);
 % 距离
 distance = (bndX-refX).^2+(bndY-refY).^2;
-[~, order] = sort(distance,'descend');
+[~, order] = sort(distance,'ascend');
 bnd_order = bnd(order);
 end

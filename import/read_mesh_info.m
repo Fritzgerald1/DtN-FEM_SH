@@ -1,4 +1,4 @@
-function [nNode, nElement, Coordinate, Ielement, n] =read_mesh_info(mesh_info,bnd,area)
+function [nNode, nElement, Coordinate, Ielement, n, e] =read_mesh_info(mesh_info,bnd,area)
 %% 节点总数
 r = find_string_row("Mesh vertex coordinates",mesh_info);
 r = r-3;
@@ -48,12 +48,14 @@ for ii = 1:length(bnd)
 	nameBnd = strrep(bnd(ii),"bnd_",'');
 	nBnd = read_boudary_info(bnd(ii),mesh_info);
 	n.(nameBnd) = nBnd;
+	e.(nameBnd) = bound_element(Ielement,nBnd)';
 end
 %% 域信息
 for ii = 1:length(area)
 	nameBnd = strrep(area(ii),"area_",'');
 	nBnd = read_area_info(area(ii),mesh_info);
 	n.(nameBnd) = nBnd;
+	e.(nameBnd) = bound_element(Ielement,nBnd)';
 end
 end
 %% 子函数

@@ -1,4 +1,4 @@
-function [nNode,nElement,Coordinate, Ielement,n, Coordinate_origin, n_origin, order] = import_mesh_MPHTXT(fileName,bnd,area)
+function [nNode,nElement,Coordinate, Ielement ,n, e, Coordinate_origin, n_origin,Ielement_origin, order] = import_mesh_MPHTXT(fileName,bnd,area)
 % [nNode,nElement,Coordinate,Ielement,n] = import_mesh(fileName,bnd)
 %
 % 输入:
@@ -15,32 +15,20 @@ function [nNode,nElement,Coordinate, Ielement,n, Coordinate_origin, n_origin, or
 fileNameMPHTXT = [fileName '.mphtxt'];
 mesh_info = importMphtxt(fileNameMPHTXT);
 
-[nNode, nElement, Coordinate, Ielement, n] =read_mesh_info(mesh_info,bnd,area);
+[nNode, nElement, Coordinate, Ielement, n, e] =read_mesh_info(mesh_info,bnd,area);
 %% 更改排序前的信息
 Coordinate_origin = Coordinate;
 n_origin = n;
-
+Ielement_origin = Ielement;
 %% 左右边界节点按xy轴顺序排序
-maxY = max(Coordinate(:,2));
-refPoint = [0;maxY]; % 参考点
-
-fieldName = fieldnames(n);
-for ii = 1:length(fieldName)
-	iField = fieldName{ii};
-	new_node_number = order_bnd(refPoint,Coordinate, n.(iField));
-	n.(iField) = new_node_number;
-end
-
-% n.left = order_bnd(refPoint,Coordinate, n.left);
-% n.right = order_bnd(refPoint,Coordinate, n.right);
-% n.top = order_bnd(refPoint,Coordinate, n.top);
-% n.bottom = order_bnd(refPoint,Coordinate, n.bottom);
-
-
+minY = min(Coordinate(:,2));
+refPoint = [0;minY-1]; % 参考点
+n.left = order_bnd(refPoint,Coordinate, n.left);
+n.right = order_bnd(refPoint,Coordinate, n.right);
 
 %% 节点编号重排(去掉形心节点)
 order = unique(Ielement(:)); % 新的节点顺序与旧的节点顺序对照表
-[Coordinate, Ielement, n] = new_order(Coordinate, Ielement, n, order);
+[Coordinate, Ielement, n, e] = new_order(Coordinate, Ielement, n, order);
 
 % 节点编号重排（左边界-中间-右边界）
 % [Coordinate, Ielement, n] = change_node_order(Coordinate, Ielement, n, nNode);
